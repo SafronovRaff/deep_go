@@ -24,14 +24,12 @@ type CircularQueue[T comparable] struct {
 	values []T
 	head   int
 	tail   int
-	size   int
 	count  int
 }
 
 func NewCircularQueue[T comparable](size int) *CircularQueue[T] {
 	return &CircularQueue[T]{
 		values: make([]T, size),
-		size:   size,
 	}
 }
 
@@ -40,7 +38,7 @@ func (q *CircularQueue[T]) Push(value T) bool {
 		return false
 	}
 	q.values[q.tail] = value
-	q.tail = (q.tail + 1) % q.size
+	q.tail = (q.tail + 1) % len(q.values)
 	q.count++
 
 	return true
@@ -51,7 +49,7 @@ func (q *CircularQueue[T]) Pop() bool {
 		return false
 	}
 	q.values[q.head] = zero[T]()
-	q.head = (q.head + 1) % q.size
+	q.head = (q.head + 1) % len(q.values)
 	q.count--
 
 	return true
@@ -69,7 +67,7 @@ func (q *CircularQueue[T]) Back() (T, bool) {
 	if q.Empty() {
 		return zero[T](), false
 	}
-	back := (q.tail - 1 + q.size) % q.size
+	back := (q.tail - 1 + len(q.values)) % len(q.values)
 
 	return q.values[back], true
 }
@@ -79,7 +77,7 @@ func (q *CircularQueue[T]) Empty() bool {
 }
 
 func (q *CircularQueue[T]) Full() bool {
-	return q.count == q.size
+	return q.count == len(q.values)
 }
 
 func zero[T any]() T {
