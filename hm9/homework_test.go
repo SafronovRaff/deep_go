@@ -47,7 +47,7 @@ func Serialize(p Person) string {
 	return b.String()
 }
 
-func parse(t reflect.StructTag) (field string, om bool, ok bool) {
+func parse(t reflect.StructTag) (field string, omitempty, ok bool) {
 	meta, ok := t.Lookup("properties")
 	if !ok {
 		return
@@ -57,15 +57,14 @@ func parse(t reflect.StructTag) (field string, om bool, ok bool) {
 
 	field = strings.TrimSpace(parts[0])
 	if len(field) == 0 {
-		ok = false
+		return "", false, false
 	}
 
-	if len(parts) == 1 {
-		return
+	if len(parts) > 1 && strings.TrimSpace(parts[1]) == "omitempty" {
+		omitempty = true
 	}
 
-	om = strings.TrimSpace(parts[1]) == "omitempty"
-	return
+	return field, omitempty, true
 }
 
 func TestSerialization(t *testing.T) {
