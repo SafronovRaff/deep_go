@@ -58,22 +58,21 @@ func (m *OrderedMap[k, v]) insert(n *node[k, v], key k, val v) int {
 
 		return 0
 	}
+
 	if key < n.key {
 		if n.left == nil {
 			n.left = &node[k, v]{key: key, value: val}
-
 			return 1
 		}
+
 		return m.insert(n.left, key, val)
-	} else {
-		if n.right == nil {
-			n.right = &node[k, v]{key: key, value: val}
-
-			return 1
-		}
-
-		return m.insert(n.right, key, val)
 	}
+	if n.right == nil {
+		n.right = &node[k, v]{key: key, value: val}
+		return 1
+	}
+
+	return m.insert(n.right, key, val)
 }
 
 func (m *OrderedMap[k, v]) Erase(key k) {
