@@ -31,12 +31,19 @@ func (e *MultiError) Error() string {
 
 func Append(err error, errs ...error) *MultiError {
 	var multiErr *MultiError
-	if !errors.As(err, &multiErr) {
-		multiErr = &MultiError{}
-	}
-	multiErr.errors = append(multiErr.errors, errs...)
+	if errors.As(err, &multiErr) {
+		multiErr.errors = append(multiErr.errors, errs...)
 
-	return multiErr
+		return multiErr
+	}
+
+	all := make([]error, 0, len(errs)+1)
+	if err != nil {
+		all = append(all, err)
+	}
+	all = append(all, errs...)
+
+	return &MultiError{errors: all}
 }
 
 func TestMultiError(t *testing.T) {
